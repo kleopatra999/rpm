@@ -5,14 +5,25 @@
 module NewRelic::Rack
   class ErrorCollector
     def initialize(app, options={})
+      ::NewRelic::Agent.logger.info 'ErrorCollector initialized'
       @app = app
     end
 
     def call(env)
+      ::NewRelic::Agent.logger.info 'ErrorCollector called before'
       @app.call(env)
+      ::NewRelic::Agent.logger.info 'ErrorCollector called after'
     rescue Exception => exception
+      ::NewRelic::Agent.logger.info '--- exception'
+      ::NewRelic::Agent.logger.info exception.class
+      ::NewRelic::Agent.logger.info exception.message
+
       NewRelic::Agent.logger.debug "collecting %p: %s" % [ exception.class, exception.message ]
       request = Rack::Request.new(env)
+
+      ::NewRelic::Agent.logger.info "should_ignore? #{should_ignore_error?(exception, request)}"
+      ::NewRelic::Agent.logger.info "instance ignore? #{NewRelic::Agent.instance.error_collector.error_is_ignored?(error)}"
+      ::NewRelic::Agent.logger.info "controller ignore? #{ignored_in_controller?(exception, request)}"
 
       if !should_ignore_error?(exception, request)
         params = begin

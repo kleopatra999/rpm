@@ -80,7 +80,7 @@ module NewRelic
         end
 
         def self.included(clazz)
-          ::NewRelic::Agent.logger.info 'attaching rpm' 
+          ::NewRelic::Agent.logger.info 'attaching rpm'
           clazz.extend(ClassMethods)
         end
 
@@ -93,8 +93,11 @@ module NewRelic
 
           def build_with_newrelic(*args, &block)
             ::NewRelic::Agent.logger.info 'Build with NewRelic'
+            ::NewRelic::Agent.logger.info '--- config'
             ::NewRelic::Agent.logger.info NewRelic::Agent.config.inspect
-            
+            ::NewRelic::Agent.logger.info '--- config'
+
+
             unless NewRelic::Agent.config[:disable_sinatra_auto_middleware]
               newrelic_middlewares.each do |middleware_class|
                 try_to_use(self, middleware_class)
@@ -139,7 +142,6 @@ module NewRelic
 
         def dispatch_with_newrelic
           ::NewRelic::Agent.logger.info 'dispatch with new relic'
-          ::NewRelic::Agent.logger.info env.inspect 
           if ignore_request?
             env['newrelic.ignored'] = true
             return dispatch_without_newrelic

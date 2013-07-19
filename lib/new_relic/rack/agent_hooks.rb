@@ -7,6 +7,7 @@ require 'new_relic/agent/event_listener'
 module NewRelic::Rack
   class AgentHooks
     def initialize(app, options = {})
+      ::NewRelic::Agent.logger.info 'AgentHooks initialized'
       @app = app
     end
 
@@ -18,9 +19,13 @@ module NewRelic::Rack
     # method required by Rack interface
     # [status, headers, response]
     def call(env)
+      ::NewRelic::Agent.logger.info 'AgentHooks before call'
+
       notify(:before_call, env)
       result = @app.call(env)
       notify(:after_call, env, result)
+
+      ::NewRelic::Agent.logger.info 'AgentHooks after call'
       result
     end
 
