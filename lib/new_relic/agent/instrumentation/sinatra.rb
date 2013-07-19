@@ -95,8 +95,8 @@ module NewRelic
             ::NewRelic::Agent.logger.info 'Build with NewRelic'
             ::NewRelic::Agent.logger.info '--- config'
             ::NewRelic::Agent.logger.info NewRelic::Agent.config.inspect
-            ::NewRelic::Agent.logger.info '--- config'
-
+            ::NewRelic::Agent.logger.info '--- env'
+            ::NewRelic::Agent.logger.info env.inspect
 
             unless NewRelic::Agent.config[:disable_sinatra_auto_middleware]
               newrelic_middlewares.each do |middleware_class|
